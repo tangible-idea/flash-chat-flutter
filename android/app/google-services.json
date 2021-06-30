@@ -1,0 +1,46 @@
+{
+  "project_info": {
+    "project_number": "133930666159",
+    "project_id": "tangibly-1f5ab",
+    "storage_bucket": "tangibly-1f5ab.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:133930666159:android:8f12747ce95237b2f7ac5a",
+        "android_client_info": {
+          "package_name": "net.tangibleidea.tangibly"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "133930666159-hfku30c13c9kv7273fkj0bdeth8sbhi0.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDvviEiqHMeETI_ESnlHFbnK53blO9C45A"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "133930666159-hfku30c13c9kv7273fkj0bdeth8sbhi0.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "133930666159-u42g290tk54hbkjikev64rs49r9v2okh.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "net.tangibleidea.tangibly"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
