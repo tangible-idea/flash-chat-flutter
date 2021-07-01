@@ -54,7 +54,7 @@ class _RegistrationScreenState extends State<RegistrationScreen> {
                 decoration: kPlaceHolderDecoration.copyWith(
                     hintText: "Enter your password")),
             SizedBox(
-              height:3 24.0,
+              height: 24.0,
             ),
             RoundedButton(
               content: "Register",
