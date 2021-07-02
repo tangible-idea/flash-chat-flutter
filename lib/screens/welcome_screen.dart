@@ -1,5 +1,7 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flash_chat/screens/login_screen.dart';
 import 'package:flash_chat/screens/registration_screen.dart';
+import 'package:flash_chat/screens/teachersmain_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:animated_text_kit/animated_text_kit.dart';
 import 'package:flutter/widgets.dart';
@@ -12,6 +14,27 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
+  FirebaseAuth _auth = FirebaseAuth.instance;
+  User currUser;
+
+  @override
+  void initState() {
+    super.initState();
+
+    getCurrentUser();
+  }
+
+  void getCurrentUser() {
+    final user = _auth.currentUser;
+    if (user != null) {
+      currUser = user;
+      print(currUser.email);
+      Navigator.pushNamed(context, TeachersMainScreen.id);
+    } else {
+      print("no user logged in.");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(

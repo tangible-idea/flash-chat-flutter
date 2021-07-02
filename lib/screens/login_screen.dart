@@ -66,10 +66,15 @@ class _LoginScreenState extends State<LoginScreen> {
                 child: MaterialButton(
                   onPressed: () async {
                     //Implement login functionality.
-                    final signing = await _auth.signInWithEmailAndPassword(
-                        email: email, password: password);
-                    if (signing != null) {
-                      Navigator.pushNamed(context, TeachersMainScreen.id);
+                    try {
+                      final signing = await _auth.signInWithEmailAndPassword(
+                          email: email, password: password);
+                      if (signing != null) {
+                        Navigator.pushNamed(context, TeachersMainScreen.id);
+                      }
+                    } catch (e) {
+                      ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Login failed\n$e")));
                     }
                   },
                   minWidth: 200.0,
