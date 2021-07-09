@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flash_chat/constants.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
 class ChatScreen extends StatefulWidget {
   static String id = "/chat";
@@ -11,6 +12,9 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   FirebaseAuth _auth = FirebaseAuth.instance;
+  FirebaseFirestore _fs = FirebaseFirestore.instance;
+
+  String typedText = "";
 
   @override
   Widget build(BuildContext context) {
@@ -34,6 +38,25 @@ class _ChatScreenState extends State<ChatScreen> {
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
+            StreamBuilder<QuerySnapshot>(
+                stream: _fs.collection("messages").snapshots(),
+                builder: (context, snapshot) {
+                  if (!snapshot.hasData) {
+                    return Center(
+                        child: CircularProgressIndicator(
+                            color: Colors.lightBlueAccent));
+                  }
+                  final messages = snapshot.data.docs;
+                  List<Text> messageWidgets = [];
+                  for (var message in messages) {
+                    final messageText = message.get('text');
+                    final messageSender = message.get('sender');
+                    final messageWidget =
+                        Text('$messageText from $messageSender');
+                    messageWidgets.add(messageWidget);
+                  }
+                  return Column(children: messageWidgets);
+                }),
             Container(
               decoration: kMessageContainerDecoration,
               child: Row(
@@ -43,6 +66,7 @@ class _ChatScreenState extends State<ChatScreen> {
                     child: TextField(
                       onChanged: (value) {
                         //Do something with the user input.
+                        typedText = value;
                       },
                       decoration: kMessageTextFieldDecoration,
                     ),
@@ -50,6 +74,10 @@ class _ChatScreenState extends State<ChatScreen> {
                   FlatButton(
                     onPressed: () {
                       //Implement send functionality.
+                      _fs.collection("messages").add({
+                        "sender": _auth.currentUser.email,
+                        "text": typedText
+                      });
                     },
                     child: Text(
                       'Send',
