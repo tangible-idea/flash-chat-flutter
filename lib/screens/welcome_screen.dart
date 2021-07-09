@@ -21,7 +21,7 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
   void initState() {
     super.initState();
 
-    getCurrentUser();
+    //getCurrentUser();
   }
 
   void getCurrentUser() {

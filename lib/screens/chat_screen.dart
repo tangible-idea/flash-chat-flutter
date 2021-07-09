@@ -4,6 +4,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/widgets.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 
+FirebaseAuth _auth = FirebaseAuth.instance;
+FirebaseFirestore _fs = FirebaseFirestore.instance;
+User currUser;
+
 class ChatScreen extends StatefulWidget {
   static String id = "/chat";
   @override
@@ -11,9 +15,6 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  FirebaseAuth _auth = FirebaseAuth.instance;
-  FirebaseFirestore _fs = FirebaseFirestore.instance;
-
   final messageTextController = TextEditingController();
   String typedText = "";
 
@@ -47,7 +48,7 @@ class _ChatScreenState extends State<ChatScreen> {
                         child: CircularProgressIndicator(
                             color: Colors.lightBlueAccent));
                   }
-                  final messages = snapshot.data.docs;
+                  final messages = snapshot.data.docs.reversed;
                   List<MessageBubble> messageBubbles = [];
                   for (var message in messages) {
                     final messageText = message.get('text');
@@ -58,7 +59,11 @@ class _ChatScreenState extends State<ChatScreen> {
                     );
                     messageBubbles.add(messageBubble);
                   }
-                  return Expanded(child: ListView(children: messageBubbles));
+                  return Expanded(
+                      child: ListView(
+                    children: messageBubbles,
+                    reverse: true,
+                  ));
                 }),
             Container(
               decoration: kMessageContainerDecoration,
@@ -99,33 +104,71 @@ class _ChatScreenState extends State<ChatScreen> {
   }
 }
 
-class MessageBubble extends StatelessWidget {
-  const MessageBubble({this.text, this.sender});
-  final String sender;
-  final String text;
+class MessageBubble extends StatefulWidget {
+  MessageBubble({this.text, this.sender});
+  final String sender; // 보낸 사람
+  final String text; // 메시지
+
+  @override
+  _MessageBubbleState createState() =>
+      _MessageBubbleState(text: text, sender: sender);
+}
+
+class _MessageBubbleState extends State<MessageBubble> {
+  //MessageBubble({this.text, this.sender, this.myID});
+  _MessageBubbleState({this.text, this.sender});
+  final String sender; // 보낸 사람
+  final String text; // 메시지
+  CrossAxisAlignment alignMessage; // 메시지 align
+  Color bubbleColor; // 버블색
+  Color textColor; // 텍스트색
+
+  @override
+  void initState() {
+    super.initState();
+    checkA();
+  }
+
+  checkA() {
+    setState(() {
+      if (sender == _auth.currentUser.email) {
+        alignMessage = CrossAxisAlignment.start;
+        bubbleColor = Colors.blueGrey.shade100;
+        textColor = Colors.black.withAlpha(160);
+      } else {
+        alignMessage = CrossAxisAlignment.end;
+        bubbleColor = Colors.lightBlueAccent;
+        textColor = Colors.white70;
+      }
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    checkA();
     return Padding(
       padding: const EdgeInsets.all(4.0),
-      child: Column(crossAxisAlignment: CrossAxisAlignment.end, children: [
+      child: Column(crossAxisAlignment: alignMessage, children: [
         Text(
           sender,
           style: TextStyle(color: Colors.black54, fontSize: 10.0),
         ),
         Material(
             elevation: 5.0,
-            borderRadius: BorderRadius.circular(30.0),
+            borderRadius: BorderRadius.only(
+                topLeft: Radius.circular(30),
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30)),
             child: Padding(
               padding:
                   const EdgeInsets.symmetric(vertical: 10.0, horizontal: 10.0),
               child: Text(
                 text,
-                style: TextStyle(color: Colors.white),
+                style: TextStyle(color: textColor),
                 textAlign: TextAlign.center,
               ),
             ),
-            color: Colors.lightBlueAccent),
+            color: bubbleColor),
       ]),
     );
   }
